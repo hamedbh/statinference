@@ -1,13 +1,11 @@
 ---
-title: 'Statistical Inference: Final Project; Part 1'
+title: 'The Exponential Distribution and the Central Limit Theorem'
 author: "Hamed Bastan-Hagh"
 date: "20 July 2016"
 output: pdf_document
 ---
 
-## The Exponential Distribution and the Central Limit Theorem
-
-### Overview
+## Overview
 In this project I will investigate the exponential distribution in R and 
 compare it with the Central Limit Theorem. The exponential distribution can be 
 simulated in R with `rexp(n, lambda)` where lambda is the rate parameter. The 
@@ -20,7 +18,7 @@ distribution of the mean of 40 exponentials.
 We will see that the distributions of the sample means and variance are as we 
 would expect from the Central Limit Theorem in our simulations.
 
-### Question 1:  
+## Question 1:  
 **Compare the sample mean to the theoretical mean of the distribution.**
 
 To answer this we need 1,000 samples with size n = 40 from the exponential 
@@ -61,18 +59,18 @@ NB. The red vertical line shows the sample mean, while the blue line is the
 theoretical mean. They are very close to each other so you may find it 
 difficult to see the red line.
 
-#### Sample Mean
+### Sample Mean
 The sample mean is `r round(xbar, 3)`
 
-#### Theoretical Mean
+### Theoretical Mean
 The theoretical mean is `1 / lambda`, which is `r mu`.
 
-#### Comparison
+### Comparison
 The difference between the sample and theoretical means is only 
 `r abs(xbar - mu)`, so we can see that the sample mean is a close approximation 
 to the theoretical mean.
 
-### Question 2: 
+## Question 2: 
 **Compare the variance of the sample to the theoretical variance of the 
 distribution.**
 
@@ -86,7 +84,7 @@ these is `r abs(var(samp.mean) - ((1/n) * (1/lambda^2)))`**. We can see that
 the variance of our sample means is again very close to the theoretical figure, 
 as we would expect from the Central Limit Theorem.
 
-### Question 3:
+## Question 3:
 **Show that the distribution is approximately normal.**
 
 We can demonstrate that the distribution is approximately normal by overlaying 

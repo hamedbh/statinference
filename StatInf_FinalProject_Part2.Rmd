@@ -1,0 +1,147 @@
+---
+title: 'Inferential Analysis of Tooth Growth Data'
+author: "Hamed Bastan-Hagh"
+date: "22 July 2016"
+output: pdf_document
+---
+
+## Synopsis
+
+This is an analysis of the ToothGrowth data in R. This records the length 
+of odontoblasts (cells responsible for tooth growth) in 60 guinea pigs. Each 
+animal received one of three dose levels of vitamin C (0.5, 1, and 2 mg/day) by 
+one of two delivery methods: orange juice, coded as OJ; or ascorbic acid, a 
+form of vitamin C, coded as VC.
+
+This analysis concludes that there is a statistically significant effect of 
+dose amount on tooth growth, but no such effect for supplement type.
+
+## 1. Load Data and Perform Basic Exploratory Data Analysis
+
+``` {r Loading the Data}
+# Load required libraries
+library(datasets)
+library(dplyr)
+library(ggplot2)
+# Assign ToothGrowth data to variable df in 'tibble' form for easier printing
+df <- tbl_df(ToothGrowth)
+```
+
+With the data loaded we will do some basic exploratory analysis.
+
+``` {r Exploratory Data Analysis 1}
+# Boxplot of the values separated by supplement type
+ggplot(df, aes(supp, len)) +
+    geom_boxplot(aes(fill = supp), notch = TRUE) +
+    labs(title = "Effect of Supplement Type on Tooth Growth",
+         x = "Supplement Type",
+         y = "Length of Odontoblasts")
+```
+
+The notches for the two groups do not overlap, which is evidence that 
+the median value for Orange Juice is higher than Ascorbic Acid. We will 
+investigate this further in section 3.
+
+``` {r Exploratory Data Analysis 2}
+# Boxplot of the values separated by dose amount
+ggplot(df, aes(factor(dose), len)) +
+    geom_boxplot(aes(fill = dose)) +
+    labs(title = "Effect of Dose On Tooth Growth",
+         x = "Dose in mg/day",
+         y = "Length of Odontoblasts")
+```
+
+This indicates a positive correlation between dose amount and length, which we 
+will investigate further in section 3.
+
+## 2. Summary of the Data
+
+Here are some basic summaries for the data set.
+
+``` {r Data Summary 1}
+#Print put basic summary of our data
+summary(df)
+# Print out levels for supplement type 'supp'
+levels(df$supp)
+# Print out unique values for dose amount 'dose'
+unique(df$dose)
+```
+
+Now we can see a summary of the data grouped by dose amount.
+
+``` {r Data Summary 2}
+df %>% 
+    group_by(dose) %>% 
+        summarise(len = mean(len))
+```
+
+And finally a summary of the data grouped by supplement type.
+
+``` {r Data Summary 3}
+df %>% 
+    group_by(supp) %>% 
+        summarise(len = mean(len))
+```
+
+## 3. Compare tooth growth by "supp" and "dose"
+
+### 3a. Supplement Type
+
+Firstly we will explore the effect of supplement type on tooth growth with a 
+t-test. Our null hypothesis is:
+
+`H_0: mu = mu_0`
+
+The alternative hypothesis:
+
+`H_a: mu != mu_0`
+
+``` {r Testing Effect of Supplement Type on Tooth Growth}
+# Use function t.test on the dataset
+t.test(len ~ supp, df)
+```
+
+Our p-value is 0.06, which is slightly higher than our threshold for 95% 
+confidence. Therefore we **fail to reject the null hypothesis**, and cannot 
+conclude that supplement type has an effect on tooth growth.
+
+### 3b. Dose Amount
+
+Now we will test the effect of dose amount on tooth growth in our data. We will 
+test the ToothGrowth data in three sections based on dose amount: testing 0.5 
+against 1.0; 0.5 against 2.0; and 1.0 against 2.0. For each of these our null 
+hypothesis is that:
+
+`H_0: mu = mu_0`
+
+Alternative hypothesis:
+
+`H_a: mu != mu_0`
+
+``` {r Testing Effect of Dose Amount on Tooth Growth 1}
+# Testing 0.5 against 1.0 by removing those rows where dose = 2.0
+t.test(len ~ dose, df[df$dose != 2, ])
+```
+
+``` {r Testing Effect of Dose Amount on Tooth Growth 2}
+# Testing 0.5 against 2.0 by removing those rows where dose = 1.0
+t.test(len ~ dose, df[df$dose != 1, ])
+```
+
+``` {r Testing Effect of Dose Amount on Tooth Growth 3}
+# Testing 1.0 against 2.0 by removing those rows where dose = 0.5
+t.test(len ~ dose, df[df$dose != 0.5, ])
+```
+
+P-values for each of these tests is low enough that we can **reject the null 
+hypothesis**. We can conclude that dose amount does have an impact on tooth 
+growth.
+
+## 4. Conclusions
+
+Based on our analysis we can conclude that:
+
+- Supplement type does not have a statistically significant effect on tooth 
+growth in our data.
+- Dose amount does have a statistically significant effect on tooth growth in 
+our data.
